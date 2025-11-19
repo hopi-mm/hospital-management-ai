@@ -53,8 +53,14 @@ Return only JSON: {{'id': , 'name': }}
 
     response = model.generate_content(prompt)
 
+    # Try parsing AI output, fallback if invalid
     try:
-        return json.loads(response.text)
+        parsed = json.loads(response.text)
+        # Ensure keys exist
+        if "id" in parsed and "name" in parsed:
+            return parsed
+        else:
+            return {"id": None, "name": "No suitable doctor found"}
     except:
         return {"id": None, "name": "No suitable doctor found"}
 
@@ -75,6 +81,10 @@ Suggest medicines in a JSON list format: {{'medicines': []}}
     response = model.generate_content(prompt)
 
     try:
-        return json.loads(response.text)
+        parsed = json.loads(response.text)
+        if "medicines" in parsed:
+            return parsed
+        else:
+            return {"medicines": []}
     except:
         return {"medicines": []}
